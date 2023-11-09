@@ -64,13 +64,19 @@ app.use(function(req, res, next) {
 })
 //创建服务
 app.use(processRequest)
- 
+// app.use(express.static('./'))
 var server = http.createServer(app);
+
+// app.listen(8000)
 
 isPortOccupied(8080).then(port=>{
     server.listen(port,  () => {
         console.log(`App listening at port ${port}`)
     })
+
+    // app.listen(port,  () => {
+    //     console.log(`App listening at port ${port}`)
+    // })
 })
 
 
@@ -119,7 +125,12 @@ function processRequest (request, response) {
     }
  
     //获取资源文件的绝对路径
-    var filePath = path.resolve(__dirname + pathName);
+    // var filePath = path.resolve(__dirname + pathName);
+    // var filePath = path.resolve(__dirname, '..');
+    // filePath = path.resolve(filePath, '..');
+
+    var filePath = path.resolve(process.cwd() + pathName);
+
     console.log(filePath);
     //获取对应文件的文档类型
     //我们通过path.extname来获取文件的后缀名。由于extname返回值包含”.”，所以通过slice方法来剔除掉”.”，
