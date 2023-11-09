@@ -8,6 +8,29 @@ var cp = require('child_process');
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser');
+const net = require('net')
+ 
+function isPortOccupied(port){
+    var server = net.createServer().listen(port)
+    return new Promise((resolve,reject)=>{
+        // 如果监听成功，表示端口没有被其他服务占用，端口可用，取消监听，返回端口给调用者。
+        server.on("listening",()=>{
+            console.log('the server is running on port '+port)
+            server.close()
+            resolve(port)
+        })
+        // 如果监听出错，端口+1，继续监听，直到监听成功。
+        server.on("error",(err)=>{
+            if(err.code === 'EADDRINUSE'){
+                resolve(isPortOccupied(port+1))
+                console.log('this port '+ port+' is occupied try another.')
+                // console.log('这个端口 '+ port+' 被占用, 使用另一个端口.')
+            }else{
+                reject(err)
+            }
+        })
+    })
+}
 
 app.use(bodyParser.urlencoded({extended: false}))
 //设置跨域访问
@@ -42,13 +65,15 @@ app.use(function(req, res, next) {
 //创建服务
 app.use(processRequest)
  
-var port = 8080;
- 
 var server = http.createServer(app);
 
-server.listen(port,  () => {
-    console.log(`App listening at port ${port}`)
+isPortOccupied(8080).then(port=>{
+    server.listen(port,  () => {
+        console.log(`App listening at port ${port}`)
+    })
 })
+
+
  
 //响应请求的函数
 function processRequest (request, response) {
