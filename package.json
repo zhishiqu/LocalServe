@@ -1,10 +1,33 @@
 {
+  "name": "LocalServe",
+  "version": "1.0.0",
+  "private": true,
+  "bin": "./localServe.js",
+  "/*bin*/": "  -----这是注释-------打包入口文件----------",
+  "scripts": {
+    "start": "node ./bin/www",
+    "pkg": "pkg . -o app --debug",
+    "dist": "pkg . --out-path=dist/ --targets=win --compress=GZip",
+    "build": "pkg .",
+    "/*pkg*/": "--------打包命令，app：打包文件名称---------"
+  },
+  "pkg": {
+    "/*targets*/": "--------可打包多个版本，还可添加linux等--------",
+    "targets": [
+      "win"
+    ],
+    "/*assets*/": "---------静态文件，app.js中调用了，没有会报错-------",
+    "assets": [
+      "public/**/*"
+    ]
+  },
   "dependencies": {
     "child_process": "^1.0.2",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "path": "^0.12.7",
+    "pkg": "^5.8.1",
     "process": "^0.11.10",
     "url": "^0.11.3"
   }
